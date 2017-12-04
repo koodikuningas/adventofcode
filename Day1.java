@@ -25,19 +25,19 @@ class CaptchaPuzzle
 
     int solvePart2(String puzzle)
     {
-    int sum = 0;
-    for(int i = 0; i < puzzle.length(); i++)
-    {
-        // The list is circular
-        int nextIndex = i+puzzle.length()/2;
-        if (nextIndex > puzzle.length()-1)
-            nextIndex = nextIndex-puzzle.length();
-        int number = Character.getNumericValue(puzzle.charAt(i));
-        int nextNumber = Character.getNumericValue(puzzle.charAt(nextIndex));
-        if (number == nextNumber)
-            sum += number;
-    }
-    return sum;
+        int sum = 0;
+        for(int i = 0; i < puzzle.length(); i++)
+        {
+            // The list is circular
+            int nextIndex = i+puzzle.length()/2;
+            if (nextIndex > puzzle.length()-1)
+                nextIndex = nextIndex-puzzle.length();
+            int number = Character.getNumericValue(puzzle.charAt(i));
+            int nextNumber = Character.getNumericValue(puzzle.charAt(nextIndex));
+            if (number == nextNumber)
+                sum += number;
+        }
+        return sum;
     }
 }
 

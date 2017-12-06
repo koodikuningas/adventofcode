@@ -10,6 +10,8 @@ import java.util.List;
 class Debugger
 {
     private int[] data;
+    private String repetitiveCycle;
+    private List<String> oldCycles = new ArrayList<String>();
 
     public void init(String input)
     {
@@ -25,7 +27,7 @@ class Debugger
     {
         boolean similarFound = false;
         int cycles = 0;
-        List<String> oldCycles = new ArrayList<String>();
+
         while (!similarFound)
         {
             int index = findMaxIndex();
@@ -34,7 +36,7 @@ class Debugger
             int quotient = (int)Math.round((float)number / divisor);                  
             oldCycles.add(this.toString());
             cycles++;
-    
+
             data[index] = 0;
             for (int i = 0; i < data.length; i++)
             {
@@ -49,14 +51,17 @@ class Debugger
             }
 
             if (oldCycles.contains(this.toString()))
+            {
                 similarFound = true;
+                repetitiveCycle = this.toString();
+            }
         }
         return cycles;
     }
 
     public int solvePart2()
     {
-        return 0;
+        return oldCycles.size() - oldCycles.indexOf(repetitiveCycle);
     }
 
     private int findMaxIndex()
@@ -94,8 +99,6 @@ public class Day6
         debugger.init(input);
         int solution1 = debugger.solvePart1();
         System.out.println("Part 1 solution is " + solution1);
-        // Reinitialize
-        debugger.init(input);
         int solution2 = debugger.solvePart2();
         System.out.println("Part 2 solution is " + solution2);
     }

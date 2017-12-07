@@ -10,8 +10,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.HashMap;
 
 class Node implements Comparable<Node>
@@ -61,6 +63,52 @@ class Node implements Comparable<Node>
         return size;
     }
 
+    public int totalWeight()
+    {
+        int totalWeight = weight;
+        for (Node child : children)
+        {
+            totalWeight += child.totalWeight();
+        }
+        return totalWeight;
+    }
+
+    public int findUnbalancedDifference()
+    {
+        Map<Integer, Integer> weights = new HashMap<Integer, Integer>();
+        for (Node child : children)
+        {
+            int i = child.totalWeight();
+            Integer weight = weights.get(i);
+            weights.put(i, weight != null ? weight + 1 : 0);
+        }
+
+        Comparator<Map.Entry<Integer, Integer>> comparator = new Comparator<Map.Entry<Integer, Integer>>()
+        {
+            @Override
+            public int compare(Entry<Integer, Integer> o1, Entry<Integer, Integer> o2)
+            {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        };
+
+        Integer max = Collections.max(weights.entrySet(), comparator).getKey();
+        Integer min = Collections.min(weights.entrySet(), comparator).getKey();
+        if (min != max)
+        {
+            for (Node child : children)
+            {
+                if (child.totalWeight() == min)
+                {
+                    int difference = child.findUnbalancedDifference();
+                    if (difference == 0)
+                        return Math.abs(max - min);
+                }
+            }
+        }
+        return 0;
+    }
+
     public String toString()
     {
         String childStr = "";
@@ -68,7 +116,7 @@ class Node implements Comparable<Node>
         {
             childStr += child + " ";
         }
-        return name + " " + weight + " " + childStr;
+        return name + " " + weight + " " + totalWeight() + " " + childStr;
     }
 
     public int compareTo(Node another)
@@ -157,7 +205,8 @@ class Tree
 
     public int solvePart2()
     {
-        return 0;
+        Node node = nodes.get(0);
+        return node.findUnbalancedDifference();
     }
 }
 

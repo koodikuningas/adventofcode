@@ -20,6 +20,20 @@ class Registers
 {
     private Map<String, Integer> registerValues = new HashMap<String, Integer>();
     private List<String> lines;
+    private Comparator<Map.Entry<String, Integer>> comparator;
+    private int allTimeHigh = 0;
+
+    public Registers()
+    {
+        comparator = new Comparator<Map.Entry<String, Integer>>()
+        {
+            @Override
+            public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2)
+            {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        };
+    }
     
     public void readFromFile(String fileName)
     {
@@ -72,6 +86,11 @@ class Registers
 
         storeRegister(register, registerValue);
     }
+
+    private int findMax()
+    {
+        return Collections.max(registerValues.entrySet(), comparator).getValue();
+    }
     
     public void init()
     {
@@ -97,27 +116,21 @@ class Registers
 
             if (testCondition(conditionRegister, conditionOperator, conditionValue))
                 runCommand(commandRegister, command, commandArgument);
+
+            int max = findMax();
+            if (max > allTimeHigh)
+                allTimeHigh = max;
         }       
     }
 
     public int solvePart1()
     {
-        Comparator<Map.Entry<String, Integer>> comparator = new Comparator<Map.Entry<String, Integer>>()
-        {
-            @Override
-            public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2)
-            {
-                return o1.getValue().compareTo(o2.getValue());
-            }
-        };
-
-        int max = Collections.max(registerValues.entrySet(), comparator).getValue();
-        return max;
+        return findMax();
     }
 
     public int solvePart2()
     {
-        return 0;
+        return allTimeHigh;
     }
 }
 

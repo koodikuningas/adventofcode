@@ -7,19 +7,13 @@ Author: koodikuningas
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.HashMap;
 
 class Stream
 {
     private List<String> lines;
     private int totalScore = 0;
+    private int canceledCharacters = 0;
     
     public void readFromFile(String fileName)
     {
@@ -57,6 +51,10 @@ class Stream
                     {
                         ignoreMode = true;
                     }
+                    else
+                    {
+                        canceledCharacters++;
+                    }
                 }
             }
             else
@@ -85,7 +83,7 @@ class Stream
 
     public int solvePart2()
     {
-        return 1;
+        return canceledCharacters;
     }
 }
 

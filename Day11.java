@@ -16,6 +16,7 @@ class HexGrid
     private int startY = 0;    
     private int currentX = startX;
     private int currentY = startY;
+    private int distanceMax = 0;
 
     public void readFromFile(String fileName)
     {
@@ -62,11 +63,17 @@ class HexGrid
                 currentX++;
                 currentY++;
             }
+
+            int currentDistance = distanceFromCurrentCoordinates();
+            if (currentDistance > distanceMax)
+            {
+                distanceMax = currentDistance;
+            }
         }
         
     }
 
-    public int solvePart1()
+    private int distanceFromCurrentCoordinates()
     {
         int x1 = startX;
         int z1 = startY - (startX - (startX&1)) / 2;
@@ -79,10 +86,15 @@ class HexGrid
         int result = Math.max(Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)), Math.abs(z2 - z1));
         return result;
     }
+
+    public int solvePart1()
+    {
+        return distanceFromCurrentCoordinates();
+    }
     
     public int solvePart2()
     {
-        return 0;
+        return distanceMax;
     }
 }
 

@@ -30,8 +30,8 @@ class Pipes
         catch (Exception e) {}
     }
     
-    public void init()
-    {        
+    public void findPipe(String programToFind)
+    {
         for (String line : lines)
         {
             String[] parts = line.split("<->");
@@ -46,7 +46,6 @@ class Pipes
             pipes.put(left, programs);
         }
         
-        String programToFind = "0";
         for (Map.Entry<String, List<String>> entry : pipes.entrySet())
         {
             String mainProgram = entry.getKey();
@@ -98,7 +97,27 @@ class Pipes
     
     public int solvePart2()
     {
-        return 0;
+        int groups = 1;
+        List<String> notFoundPipes = new ArrayList<String>();
+        for (String key : pipes.keySet())
+        {
+            if (!resultPipes.contains(key))
+                notFoundPipes.add(key);
+        }
+
+        while (notFoundPipes.size() > 0)
+        {
+            findPipe(notFoundPipes.get(0));
+            notFoundPipes.clear();
+            for (String key : pipes.keySet())
+            {
+                if (!resultPipes.contains(key))
+                    notFoundPipes.add(key);
+            }
+            groups++;
+        }
+
+        return groups;
     }
 }
 
@@ -115,7 +134,7 @@ public class Day12
         String fileName = args[0];      
         Pipes pipes = new Pipes();
         pipes.readFromFile(fileName);
-        pipes.init();
+        pipes.findPipe("0");
         int solution1 = pipes.solvePart1();
         System.out.println("Part 1 solution is " + solution1);
         int solution2 = pipes.solvePart2();

@@ -82,7 +82,7 @@ class FireWall
 {
     private List<String> lines;
     private Map<Integer, Layer> layers;
-    private int totalSeverity = 0;
+    private int maxDepth = 0;
 
     public void readFromFile(String fileName)
     {
@@ -97,7 +97,6 @@ class FireWall
     public void init()
     {
         layers = new HashMap<Integer, Layer>();
-        int maxDepth = 0;
         for (String line : lines)
         {
             String[] parts = line.split(":");
@@ -108,36 +107,66 @@ class FireWall
             if (depth > maxDepth)
                 maxDepth = depth;
         }
+    }
 
+    private void advanceScanners()
+    {
+        for (Map.Entry<Integer, Layer> entry : layers.entrySet())
+        {
+            Layer layer = entry.getValue();
+            layer.advanceScanner();
+        }
+    }
+
+    private void travelFireWall()
+    {
         for (int i = 0; i <= maxDepth; i++)
         {
             Layer currentLayer = layers.get(i);
             if (currentLayer != null)
                 currentLayer.tryToEnter();
 
-            for (Map.Entry<Integer, Layer> entry : layers.entrySet())
-            {
-                Layer layer = entry.getValue();
-                layer.advanceScanner();
-            }
+            advanceScanners();
         }
+    }
 
+    public int solvePart1()
+    {
+        travelFireWall();
+
+        int totalSeverity = 0;
         for (Map.Entry<Integer, Layer> entry : layers.entrySet())
         {
             Layer layer = entry.getValue();
             if (layer.getCaught())
                 totalSeverity += layer.getSeverity();
         }
-    }
-
-    public int solvePart1()
-    {
         return totalSeverity;
     }
     
     public int solvePart2()
     {
-        return 0;
+        int delay = 2;
+
+        while (true)
+        {
+            boolean caught = false;
+            for (Map.Entry<Integer, Layer> entry : layers.entrySet()) 
+            {
+                Layer layer = entry.getValue();     
+                if ((layer.getDepth() + delay) % ((layer.getRange() - 1) * 2) == 0) 
+                {
+                    caught = true;
+                    break;
+                }
+            }
+
+            if (!caught)
+                break;
+
+            delay+= 2;
+        }   
+        return delay;
     }
 }
 
@@ -157,6 +186,7 @@ public class Day13
         fireWall.init();
         int solution1 = fireWall.solvePart1();
         System.out.println("Part 1 solution is " + solution1);
+        fireWall.init();
         int solution2 = fireWall.solvePart2();
         System.out.println("Part 2 solution is " + solution2);
     }

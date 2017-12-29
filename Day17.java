@@ -17,10 +17,11 @@ import java.util.Collections;
 class SpinLock
 {   
     private List<String> lines;
-    private int ROUNDS = 2017;
-    private List<Integer> buffer = new ArrayList<Integer>();
+    private int ROUNDS_PART1 = 2017;
+    private int ROUNDS_PART2 = 50000000;
+    private List<Integer> buffer;
     private int steps;
-    private int currentPosition = 0;
+    private int currentPosition;
 
     public void readFromFile(String fileName)
     {
@@ -44,10 +45,15 @@ class SpinLock
 
     public void init()
     {
-        steps = Integer.parseInt(lines.get(0));
+        buffer = new ArrayList<Integer>();
         buffer.add(0);
+        currentPosition = 0;
+        steps = Integer.parseInt(lines.get(0));
+    }
 
-        for (int i = 1; i <= ROUNDS; i++)
+    public void spin(int rounds)
+    {
+        for (int i = 1; i <= rounds; i++)
         {
             advance();
             currentPosition++;
@@ -58,7 +64,9 @@ class SpinLock
 
     public int solvePart1()
     {
-        int index = buffer.indexOf(2017);
+        spin(ROUNDS_PART1);
+
+        int index = buffer.indexOf(ROUNDS_PART1);
         if (index == buffer.size() - 1)
             return buffer.get(0);
         return buffer.get(index + 1);
@@ -66,7 +74,17 @@ class SpinLock
     
     public int solvePart2()
     {
-        return 0;
+        int index = 0;
+        int result = 0;
+
+        for (int i = 1; i <= ROUNDS_PART2; i++)
+        {
+            index = (steps + index) % i + 1;
+            if (index == 1)
+                result = i;
+        }
+
+        return result;
     }
 }
 

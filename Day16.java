@@ -17,7 +17,8 @@ import java.util.Collections;
 class Dancing
 {   
     private List<String> lines;
-    String programs = "abcdefghijklmnop";
+    private String[] parts;
+    private String programs;
 
     public void readFromFile(String fileName)
     {
@@ -47,7 +48,12 @@ class Dancing
 
     public void init()
     {
-        String[] parts = lines.get(0).split(",");
+        programs = "abcdefghijklmnop";
+        parts = lines.get(0).split(",");
+    }
+
+    public void runPrograms()
+    {
         for (String part : parts)
         {
             if (part.startsWith("s"))
@@ -76,12 +82,27 @@ class Dancing
 
     public String solvePart1()
     {
+        runPrograms();
         return programs;
     }
     
-    public int solvePart2()
+    public String solvePart2()
     {
-        return 0;
+        int rounds = 1000000000;
+
+        List<String> allPrograms = new ArrayList<String>();
+        for (int i = 0; i < rounds; i++)
+        {
+            if (allPrograms.contains(programs))
+            {
+                return allPrograms.get(rounds % i);
+            }
+
+            allPrograms.add(programs);
+            runPrograms();
+        }
+
+        return null;
     }
 }
 
@@ -101,7 +122,8 @@ public class Day16
         dancing.init();
         String solution1 = dancing.solvePart1();
         System.out.println("Part 1 solution is " + solution1);
-        int solution2 = dancing.solvePart2();
+        dancing.init();
+        String solution2 = dancing.solvePart2();
         System.out.println("Part 2 solution is " + solution2);
     }
 }

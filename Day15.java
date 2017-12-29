@@ -19,11 +19,13 @@ class Generator
     private long start = 0;
     private long factor = 0;
     private long DIVIDER = 2147483647;
+    private int criteria = 0;
 
-    public Generator(long s, long f)
+    public Generator(long s, long f, int c)
     {
         start = s;
         factor = f;
+        criteria = c;
     }
 
     public long next()
@@ -33,6 +35,19 @@ class Generator
         start = y;
         return y;
     }
+
+    public long nextValid()
+    {
+        long next = 0;
+        while (true)
+        {
+            next = next();
+            if (next % criteria == 0)
+                break;
+        }
+
+        return next;
+    }
 }
 
 class GeneratorUtil
@@ -40,8 +55,8 @@ class GeneratorUtil
     private List<String> lines;
     private int GEN_A_FACTOR = 16807;
     private int GEN_B_FACTOR = 48271;
-    private int rounds = 40000000;
-    private int matches = 0;
+    private int GEN_A_CRITERIA = 4;
+    private int GEN_B_CRITERIA = 8;
 
     public void readFromFile(String fileName)
     {
@@ -69,13 +84,16 @@ class GeneratorUtil
         return binary.substring(binary.length()-16);
     }
 
-    public void init()
+    public int solvePart1()
     {
+        int rounds = 40000000;
+        int matches = 0;
+
         int generatorAStart = parseGeneratorStart(lines.get(0));
         int generatorBStart = parseGeneratorStart(lines.get(1));
 
-        Generator generatorA = new Generator(generatorAStart, GEN_A_FACTOR);
-        Generator generatorB = new Generator(generatorBStart, GEN_B_FACTOR);
+        Generator generatorA = new Generator(generatorAStart, GEN_A_FACTOR, GEN_A_CRITERIA);
+        Generator generatorB = new Generator(generatorBStart, GEN_B_FACTOR, GEN_B_CRITERIA);
 
         for (int i = 0; i < rounds; i++)
         {
@@ -84,16 +102,30 @@ class GeneratorUtil
             if (getBinaryPart(a).equals(getBinaryPart(b)))
                 matches++;
         }
-    }
 
-    public int solvePart1()
-    {
         return matches;
     }
     
     public int solvePart2()
     {
-        return 0;
+        int rounds = 5000000;
+        int matches = 0;
+
+        int generatorAStart = parseGeneratorStart(lines.get(0));
+        int generatorBStart = parseGeneratorStart(lines.get(1));
+
+        Generator generatorA = new Generator(generatorAStart, GEN_A_FACTOR, GEN_A_CRITERIA);
+        Generator generatorB = new Generator(generatorBStart, GEN_B_FACTOR, GEN_B_CRITERIA);
+
+        for (int i = 0; i < rounds; i++)
+        {
+            long a = generatorA.nextValid();
+            long b = generatorB.nextValid();
+            if (getBinaryPart(a).equals(getBinaryPart(b)))
+                matches++;
+        }
+
+        return matches;
     }
 }
 
@@ -110,7 +142,6 @@ public class Day15
         String fileName = args[0];      
         GeneratorUtil generatorUtil = new GeneratorUtil();
         generatorUtil.readFromFile(fileName);
-        generatorUtil.init();
         int solution1 = generatorUtil.solvePart1();
         System.out.println("Part 1 solution is " + solution1);
         int solution2 = generatorUtil.solvePart2();

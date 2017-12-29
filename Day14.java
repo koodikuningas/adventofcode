@@ -150,9 +150,37 @@ class DiskFragmenter
         return usedSquares;
     }
     
+    private void markRegion(int x, int y, int regionNumber)
+    {
+        if (x < 0 || y < 0 || x > 127 || y > 127)
+            return;
+
+        if (grid[x][y] != 1)
+            return;
+
+        grid[x][y] = regionNumber;
+
+        markRegion(x - 1, y, regionNumber);
+        markRegion(x + 1, y, regionNumber);
+        markRegion(x, y - 1, regionNumber);
+        markRegion(x, y + 1, regionNumber);
+    }
+
     public int solvePart2()
     {
-        return 0;
+        int currentRegionNumber = 1;
+        for (int i = 0; i < 128; i++)
+        {
+            for (int j = 0; j < 128; j++)
+            {
+                if (grid[i][j] == 1)
+                {
+                    currentRegionNumber++;
+                    markRegion(i, j, currentRegionNumber);
+                }
+            }
+        }
+        return currentRegionNumber - 1;
     }
 }
 

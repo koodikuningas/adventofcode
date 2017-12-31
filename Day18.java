@@ -147,11 +147,6 @@ class Duet
         start();
         return part1Solution;
     }
-    
-    public int solvePart2()
-    {
-        return 0;
-    }
 }
 
 class Program

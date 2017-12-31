@@ -24,6 +24,7 @@ class SeriesOfTubes
     private int LEFT = 2;
     private int RIGHT = 3;
     private int currentDirection = DOWN;
+    private int steps = 0;
 
     public void readFromFile(String fileName)
     {
@@ -87,6 +88,8 @@ class SeriesOfTubes
             else if (currentDirection == LEFT)
                 currentX--;
 
+            steps++;
+
             if (grid[currentX][currentY] == '+')
             {
                 if (currentDirection == UP || currentDirection == DOWN)
@@ -118,7 +121,7 @@ class SeriesOfTubes
     
     public int solvePart2()
     {
-        return 0;
+        return steps;
     }
 }
 
